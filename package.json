@@ -1,16 +1,16 @@
 {
-    "name": "avalon-pwa-monorepo",
-    "version": "1.0.0",
-    "private": true,
-    "workspaces": [
-        "shared",
-        "server",
-        "client"
-    ],
-    "scripts": {
-        "dev:server": "npm --workspace=server run dev",
-        "dev:client": "npm --workspace=client run dev",
-        "build": "npm --workspace=shared run build && npm --workspace=server run build && npm --workspace=client run build",
-        "build:client": "npm --workspace=shared run build && npm --workspace=client run build"
-    }
+  "name": "avalon-pwa-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "build": "npm --workspace=shared run build && npm --workspace=server run build && npm --workspace=client run build",
+    "build:client": "npm --workspace=shared run build && npm --workspace=client run build",
+    "build:server": "npm --workspace=shared run build && npm --workspace=server run build",
+    "start:server": "npm --workspace=server run start"
+  }
 }
