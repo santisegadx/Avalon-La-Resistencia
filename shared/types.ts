@@ -22,7 +22,7 @@ export type GamePhase =
   | 'GAME_OVER';
 
 export interface RoomConfig {
-  maxPlayers: number; // 5 a 10
+  maxPlayers: number; // 4 a 10
   optionalRoles: {
     perceval: boolean;
     morgana: boolean;
@@ -135,6 +135,7 @@ export interface PlayerVision {
 
 // Matrices Constantes del Motor de Reglas
 export const ALIGNMENT_DISTRIBUTION: Record<number, { good: number; evil: number }> = {
+  4: { good: 3, evil: 1 },
   5: { good: 3, evil: 2 },
   6: { good: 4, evil: 2 },
   7: { good: 4, evil: 3 },
@@ -144,6 +145,7 @@ export const ALIGNMENT_DISTRIBUTION: Record<number, { good: number; evil: number
 };
 
 export const QUEST_TEAM_SIZES: Record<number, [number, number, number, number, number]> = {
+  4: [2, 2, 3, 3, 3],
   5: [2, 3, 2, 3, 3],
   6: [2, 3, 4, 3, 4],
   7: [2, 3, 3, 4, 4],

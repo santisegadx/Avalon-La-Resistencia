@@ -247,7 +247,7 @@ export class RoomManager {
         const baseMax = Number.isFinite(rawMax)
             ? rawMax
             : instance.publicState.room.config.maxPlayers;
-        const clampedMax = Math.max(5, Math.min(10, Math.floor(baseMax)));
+        const clampedMax = Math.max(4, Math.min(10, Math.floor(baseMax)));
 
         if (clampedMax < instance.publicState.players.length) {
             throw new Error(

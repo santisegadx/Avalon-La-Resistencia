@@ -93,7 +93,7 @@ export class AvalonEngine {
     }
 
     public static buildQuestSlots(playerCount: number): QuestSlot[] {
-        const clampedCount = Math.max(5, Math.min(10, playerCount));
+        const clampedCount = Math.max(4, Math.min(10, playerCount));
         const sizes = QUEST_TEAM_SIZES[clampedCount];
 
         return sizes.map((teamSize: number, idx: number) => {
@@ -116,7 +116,7 @@ export class AvalonEngine {
         if (!distribution) {
             return {
                 valid: false,
-                error: `La cantidad de jugadores debe estar entre 5 y 10 (actual: ${playerCount}).`,
+                error: `La cantidad de jugadores debe estar entre 4 y 10 (actual: ${playerCount}).`,
                 goodCount: 0,
                 evilCount: 0,
                 requiredGood: 0,
@@ -217,8 +217,8 @@ export class AvalonEngine {
         const players = publicState.players;
         const playerCount = players.length;
         const targetPlayers = publicState.room.config.maxPlayers;
-        if (playerCount < 5 || playerCount > 10) {
-            throw new Error('Se requieren entre 5 y 10 jugadores para iniciar.');
+        if (playerCount < 4 || playerCount > 10) {
+            throw new Error('Se requieren entre 4 y 10 jugadores para iniciar.');
         }
         if (playerCount !== targetPlayers) {
             throw new Error(

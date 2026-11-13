@@ -49,7 +49,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
   const isHost = room.hostId === myPlayerId;
   const config = room.config;
 
-  const configuredPlayers = Math.max(5, Math.min(10, config.maxPlayers));
+  const configuredPlayers = Math.max(4, Math.min(10, config.maxPlayers));
   const dist = ALIGNMENT_DISTRIBUTION[configuredPlayers];
 
   const selectedGoodCount = 1 + (config.optionalRoles.perceval ? 1 : 0);
@@ -240,8 +240,8 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
                 </span>
               )}
             </div>
-            <div className="grid grid-cols-6 gap-1.5">
-              {[5, 6, 7, 8, 9, 10].map((count) => {
+            <div className="grid grid-cols-7 gap-1">
+              {[4, 5, 6, 7, 8, 9, 10].map((count) => {
                 const isSelected = configuredPlayers === count;
                 const isTooLow = count < players.length;
                 const countBtnClass =

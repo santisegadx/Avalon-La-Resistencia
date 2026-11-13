@@ -99,7 +99,7 @@ export const HomeScreen: React.FC = () => {
         <MedievalDivider className="max-w-[200px] mx-auto my-2.5" />
         <p className="text-xs text-[#afa28a] flex items-center justify-center gap-1.5">
           <Swords className="w-3.5 h-3.5 text-amber-400/75" />
-          Deducción social en Camelot · 5 a 10 jugadores
+          Deducción social en Camelot · 4 a 10 jugadores
         </p>
       </motion.div>
 
