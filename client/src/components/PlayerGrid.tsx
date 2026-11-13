@@ -32,6 +32,8 @@ interface PlayerGridProps {
   onTogglePlayerSelect: (playerId: string) => void;
 }
 
+const SEAT_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
 export const PlayerGrid: React.FC<PlayerGridProps> = ({
   players,
   myPlayerId,
@@ -68,21 +70,21 @@ export const PlayerGrid: React.FC<PlayerGridProps> = ({
       if (known.tag === 'EVIL_TEAMMATE') {
         return {
           label: 'Aliado del Mal',
-          badgeClass: 'bg-rose-950/90 border-rose-500 text-rose-300',
+          badgeClass: 'bg-rose-950/90 border-rose-400/80 text-rose-200',
           icon: <Skull className="w-3 h-3 text-rose-400" />,
         };
       }
       if (known.tag === 'KNOWN_EVIL') {
         return {
           label: 'Agente del Mal',
-          badgeClass: 'bg-rose-950/90 border-rose-500 text-rose-300',
+          badgeClass: 'bg-rose-950/90 border-rose-400/80 text-rose-200',
           icon: <Eye className="w-3 h-3 text-rose-400" />,
         };
       }
       if (known.tag === 'POSSIBLE_MERLIN') {
         return {
           label: '¿Merlín / Morgana?',
-          badgeClass: 'bg-purple-950/90 border-purple-400 text-purple-200',
+          badgeClass: 'bg-purple-950/90 border-purple-400/80 text-purple-200',
           icon: <HelpCircle className="w-3 h-3 text-purple-300" />,
         };
       }
@@ -92,12 +94,12 @@ export const PlayerGrid: React.FC<PlayerGridProps> = ({
       return ladyReveal.alignment === 'GOOD'
         ? {
             label: 'Dama: BIEN',
-            badgeClass: 'bg-sky-950/90 border-sky-400 text-sky-200',
+            badgeClass: 'bg-sky-950/90 border-sky-400/80 text-sky-200',
             icon: <Droplets className="w-3 h-3 text-sky-300" />,
           }
         : {
             label: 'Dama: MAL',
-            badgeClass: 'bg-rose-950/90 border-rose-500 text-rose-200',
+            badgeClass: 'bg-rose-950/90 border-rose-400/80 text-rose-200',
             icon: <Droplets className="w-3 h-3 text-rose-400" />,
           };
     }
@@ -106,7 +108,7 @@ export const PlayerGrid: React.FC<PlayerGridProps> = ({
   };
 
   const gridClasses =
-    'grid gap-2 h-full max-h-[460px] ' +
+    'grid gap-2 h-full max-h-[470px] ' +
     (players.length <= 6 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3');
 
   return (
@@ -143,27 +145,33 @@ export const PlayerGrid: React.FC<PlayerGridProps> = ({
               ? winner.revealedRoles[player.id]
               : null;
 
-          let cardBorder = 'border-slate-800 bg-[#131722]';
+          let cardSurface =
+            'border-amber-500/20 bg-gradient-to-b from-[#1a1624] to-[#120f19]';
           if (inProposedTeam || isTargetSelected) {
-            cardBorder = 'border-amber-400 bg-amber-950/25 shadow-[0_0_12px_rgba(251,191,36,0.15)]';
+            cardSurface =
+              'border-amber-400 bg-gradient-to-b from-amber-950/60 to-[#1f160c] shadow-goldring';
+          } else if (isLeader) {
+            cardSurface =
+              'border-amber-400/50 bg-gradient-to-b from-[#201929] to-[#14101b]';
           } else if (isMe) {
-            cardBorder = 'border-slate-600/80 bg-[#161b28]';
+            cardSurface =
+              'border-amber-500/35 bg-gradient-to-b from-[#1e1a2a] to-[#14111c]';
           }
 
           const cardClasses =
             'relative flex flex-col justify-between p-2.5 rounded-xl border text-left transition-all ' +
-            cardBorder +
+            cardSurface +
             ' ' +
             (canInteractWithCards && !isDisabledTarget
-              ? 'cursor-pointer active:scale-[0.98] '
+              ? 'cursor-pointer active:scale-[0.975] '
               : 'cursor-default ') +
-            (isDisabledTarget ? 'opacity-45' : '');
+            (isDisabledTarget ? 'opacity-40' : '');
 
           const gameOverBadgeClass = gameOverRole
-            ? 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[10px] font-bold ' +
+            ? 'inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10px] font-display font-bold ' +
               (gameOverRole.alignment === 'GOOD'
-                ? 'bg-sky-950/70 border-sky-500/60 text-sky-300'
-                : 'bg-rose-950/70 border-rose-500/60 text-rose-300')
+                ? 'bg-sky-950/75 border-sky-400/60 text-sky-200'
+                : 'bg-rose-950/75 border-rose-400/60 text-rose-200')
             : '';
 
           return (
@@ -182,11 +190,11 @@ export const PlayerGrid: React.FC<PlayerGridProps> = ({
               <div className="flex items-start justify-between gap-1 w-full">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1">
-                    <span className="text-xs font-bold text-slate-100 truncate">
+                    <span className="text-xs font-bold text-[#f4ecda] truncate">
                       {player.nickname}
                     </span>
                     {isMe && (
-                      <span className="text-[9px] px-1 rounded bg-slate-800 text-slate-400 font-mono shrink-0">
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-400/35 text-amber-300 font-semibold shrink-0">
                         TÚ
                       </span>
                     )}
@@ -198,22 +206,34 @@ export const PlayerGrid: React.FC<PlayerGridProps> = ({
 
                 <div className="flex items-center gap-1 shrink-0">
                   {isLeader && (
-                    <span className="p-1 rounded-md bg-amber-500/20 border border-amber-500/50 text-amber-300">
+                    <span
+                      title="Líder actual"
+                      className="p-1 rounded-md bg-amber-500/20 border border-amber-400/60 text-amber-300"
+                    >
                       <Crown className="w-3 h-3" />
                     </span>
                   )}
                   {inProposedTeam && (
-                    <span className="p-1 rounded-md bg-sky-500/20 border border-sky-400/50 text-sky-300">
+                    <span
+                      title="En la comitiva"
+                      className="p-1 rounded-md bg-sky-500/20 border border-sky-400/60 text-sky-300"
+                    >
                       <Shield className="w-3 h-3" />
                     </span>
                   )}
                   {hasLady && (
-                    <span className="p-1 rounded-md bg-cyan-500/20 border border-cyan-400/50 text-cyan-300">
+                    <span
+                      title="Porta la Dama del Lago"
+                      className="p-1 rounded-md bg-cyan-500/20 border border-cyan-400/60 text-cyan-300"
+                    >
                       <Droplets className="w-3 h-3" />
                     </span>
                   )}
                   {hasVotedInPhase && (
-                    <span className="p-1 rounded-md bg-emerald-500/20 border border-emerald-500/50 text-emerald-300">
+                    <span
+                      title="Listo / Votó"
+                      className="p-1 rounded-md bg-emerald-500/20 border border-emerald-400/60 text-emerald-300"
+                    >
                       <Check className="w-3 h-3" />
                     </span>
                   )}
@@ -224,7 +244,7 @@ export const PlayerGrid: React.FC<PlayerGridProps> = ({
                 {secretOverlay ? (
                   <span
                     className={
-                      'inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[10px] font-semibold ' +
+                      'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[10px] font-semibold ' +
                       secretOverlay.badgeClass
                     }
                   >
@@ -236,8 +256,8 @@ export const PlayerGrid: React.FC<PlayerGridProps> = ({
                     {ROLE_METADATA[gameOverRole.role].name}
                   </span>
                 ) : (
-                  <span className="text-[10px] text-slate-500 font-mono">
-                    Asiento #{player.seatIndex + 1}
+                  <span className="text-[10px] text-[#8f836c] font-mono">
+                    Sitial {SEAT_ROMAN[player.seatIndex] ?? `#${player.seatIndex + 1}`}
                     {player.investigatedByLady ? ' · Dama ✓' : ''}
                   </span>
                 )}

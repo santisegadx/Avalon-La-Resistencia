@@ -50,7 +50,7 @@ export class RoomManager {
 
     private sanitizeRoomName(raw: string): string {
         const cleaned = raw.trim().replace(/\s+/g, ' ').slice(0, 28);
-        return cleaned.length >= 2 ? cleaned : 'Mesa de Camelot';
+        return cleaned.length >= 2 ? cleaned : '';
     }
 
     public getRoom(roomCode: string): EngineRoomInstance | undefined {
@@ -321,6 +321,63 @@ export class RoomManager {
         }
 
         return { instance, kickedSocketId };
+    }
+
+    public leaveRoom(socketId: string): {
+        roomCode: string;
+        dissolved: boolean;
+        instance: EngineRoomInstance | null;
+    } {
+        const session = this.sessionBySocketId.get(socketId);
+        if (!session) {
+            throw new Error('Sesión no encontrada.');
+        }
+
+        const { roomCode, playerId } = session;
+        const instance = this.rooms.get(roomCode);
+
+        if (!instance) {
+            this.sessionBySocketId.delete(socketId);
+            this.sessionsByToken.delete(session.playerToken);
+            return { roomCode, dissolved: false, instance: null };
+        }
+
+        if (instance.publicState.room.hostId === playerId) {
+            for (const token of Object.keys(instance.secretState.playerTokens)) {
+                const s = this.sessionsByToken.get(token);
+                if (s?.socketId) {
+                    this.sessionBySocketId.delete(s.socketId);
+                }
+                this.sessionsByToken.delete(token);
+            }
+            this.rooms.delete(roomCode);
+            return { roomCode, dissolved: true, instance: null };
+        }
+
+        if (instance.publicState.room.status !== 'LOBBY') {
+            throw new Error('No puedes abandonar una partida en curso.');
+        }
+
+        const idx = instance.publicState.players.findIndex((p: any) => p.id === playerId);
+        if (idx !== -1) {
+            instance.publicState.players.splice(idx, 1);
+            instance.publicState.players.forEach((p: any, i: number) => {
+                p.seatIndex = i;
+            });
+        }
+
+        for (const [token, pId] of Object.entries(instance.secretState.playerTokens)) {
+            if (pId === playerId) {
+                delete instance.secretState.playerTokens[token];
+                const s = this.sessionsByToken.get(token);
+                if (s?.socketId) {
+                    this.sessionBySocketId.delete(s.socketId);
+                }
+                this.sessionsByToken.delete(token);
+            }
+        }
+
+        return { roomCode, dissolved: false, instance };
     }
 
     public handleDisconnect(socketId: string): EngineRoomInstance | null {

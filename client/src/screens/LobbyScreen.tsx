@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
+  Compass,
   Copy,
   Crown,
+  Droplets,
   LogOut,
   Play,
   QrCode,
   Shield,
   Skull,
+  Sparkles,
   UserX,
   Users,
 } from 'lucide-react';
@@ -18,6 +21,10 @@ import {
 } from '../../../shared/types';
 import { useGameStore } from '../store/useGameStore';
 import { useHaptics } from '../hooks/useHaptics';
+import {
+  CornerFiligree,
+  MedievalDivider,
+} from '../components/MedievalOrnaments';
 
 interface LobbyScreenProps {
   roomState: PublicRoomState;
@@ -32,7 +39,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
     updateConfig,
     kickPlayer,
     startGame,
-    leaveRoomLocally,
+    leaveRoom,
     showToast,
   } = useGameStore();
   const { tapLight, tapMedium } = useHaptics();
@@ -62,7 +69,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
     tapLight();
     try {
       await navigator.clipboard.writeText(shareUrl);
-      showToast('Enlace de sala copiado al portapapeles.');
+      showToast('Pergamino de invitación copiado al portapapeles.');
     } catch {
       showToast('Código de sala: ' + room.code);
     }
@@ -123,54 +130,57 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
   const percevalBtnClass =
     'p-2.5 rounded-xl border text-left transition-all ' +
     (config.optionalRoles.perceval
-      ? 'bg-sky-950/60 border-sky-400 text-sky-100'
-      : 'bg-slate-900 border-slate-800 text-slate-400');
+      ? 'bg-gradient-to-br from-sky-950/90 to-[#11192b] border-sky-400/70 text-sky-100 shadow-[0_0_16px_rgba(56,189,248,0.16)]'
+      : 'bg-[#0e0c14] border-amber-500/15 text-[#9d917b]');
 
   const morganaBtnClass =
     'p-2.5 rounded-xl border text-left transition-all disabled:opacity-40 ' +
     (config.optionalRoles.morgana
-      ? 'bg-rose-950/60 border-rose-500 text-rose-100'
-      : 'bg-slate-900 border-slate-800 text-slate-400');
+      ? 'bg-gradient-to-br from-rose-950/90 to-[#1c0f18] border-rose-400/70 text-rose-100 shadow-[0_0_16px_rgba(244,63,94,0.16)]'
+      : 'bg-[#0e0c14] border-amber-500/15 text-[#9d917b]');
 
   const mordredBtnClass =
     'p-2.5 rounded-xl border text-left transition-all disabled:opacity-40 ' +
     (config.optionalRoles.mordred
-      ? 'bg-rose-950/60 border-rose-500 text-rose-100'
-      : 'bg-slate-900 border-slate-800 text-slate-400');
+      ? 'bg-gradient-to-br from-rose-950/90 to-[#1c0f18] border-rose-400/70 text-rose-100 shadow-[0_0_16px_rgba(244,63,94,0.16)]'
+      : 'bg-[#0e0c14] border-amber-500/15 text-[#9d917b]');
 
   const oberonBtnClass =
     'p-2.5 rounded-xl border text-left transition-all disabled:opacity-40 ' +
     (config.optionalRoles.oberon
-      ? 'bg-rose-950/60 border-rose-500 text-rose-100'
-      : 'bg-slate-900 border-slate-800 text-slate-400');
+      ? 'bg-gradient-to-br from-rose-950/90 to-[#1c0f18] border-rose-400/70 text-rose-100 shadow-[0_0_16px_rgba(244,63,94,0.16)]'
+      : 'bg-[#0e0c14] border-amber-500/15 text-[#9d917b]');
 
   const ladyRuleClass =
-    'w-full p-2.5 rounded-xl border flex items-center justify-between text-left ' +
+    'w-full p-2.5 rounded-xl border flex items-center justify-between text-left transition-all ' +
     (config.rules.ladyOfTheLake
-      ? 'bg-cyan-950/50 border-cyan-400/70 text-cyan-100'
-      : 'bg-slate-900 border-slate-800 text-slate-400');
+      ? 'bg-gradient-to-r from-cyan-950/75 to-[#101c28] border-cyan-400/65 text-cyan-100 shadow-[0_0_14px_rgba(34,211,238,0.12)]'
+      : 'bg-[#0e0c14] border-amber-500/15 text-[#9d917b]');
 
   const targetRuleClass =
-    'w-full p-2.5 rounded-xl border flex items-center justify-between text-left ' +
+    'w-full p-2.5 rounded-xl border flex items-center justify-between text-left transition-all ' +
     (config.rules.targetSelection
-      ? 'bg-amber-950/40 border-amber-400/70 text-amber-100'
-      : 'bg-slate-900 border-slate-800 text-slate-400');
+      ? 'bg-gradient-to-r from-amber-950/70 to-[#1f170f] border-amber-400/65 text-amber-100 shadow-[0_0_14px_rgba(251,191,36,0.12)]'
+      : 'bg-[#0e0c14] border-amber-500/15 text-[#9d917b]');
 
   return (
-    <div className="h-[100dvh] flex flex-col justify-between bg-[#0a0c10] max-w-md mx-auto">
-      <header className="px-4 py-3 bg-[#12151e] border-b border-slate-800 flex items-center justify-between shrink-0">
-        <div>
-          <h1 className="text-sm font-bold text-slate-100">{room.name}</h1>
-          <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-xs font-mono text-amber-400 font-bold tracking-wider">
+    <div className="h-[100dvh] flex flex-col justify-between max-w-md mx-auto">
+      {/* Cabecera Real de la Mesa */}
+      <header className="px-4 py-3 camelot-bar border-b border-amber-500/25 flex items-center justify-between shrink-0">
+        <div className="min-w-0">
+          <h1 className="font-display text-sm font-bold tracking-wide text-amber-200 truncate">
+            {room.name}
+          </h1>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-400/40 text-[11px] font-mono text-amber-300 font-bold tracking-[0.18em]">
               {room.code}
             </span>
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#1d1827] border border-amber-500/20 text-[10px] font-medium text-[#e2d7be] active:scale-95 transition-transform"
             >
-              <Copy className="w-3 h-3" /> Copiar Link
+              <Copy className="w-3 h-3 text-amber-400/80" /> Copiar
             </button>
             <button
               type="button"
@@ -178,7 +188,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
                 tapLight();
                 setShowQrModal(true);
               }}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800 text-[10px] text-amber-300"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#1d1827] border border-amber-500/20 text-[10px] font-medium text-amber-300 active:scale-95 transition-transform"
             >
               <QrCode className="w-3 h-3" /> QR
             </button>
@@ -189,35 +199,44 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
           type="button"
           onClick={() => {
             tapLight();
-            leaveRoomLocally();
+            void leaveRoom();
           }}
-          className="p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400"
+          title={isHost ? 'Disolver sala' : 'Abandonar sala'}
+          className="p-2 rounded-xl bg-[#1a1523] border border-rose-500/25 text-[#c7baa0] hover:text-rose-300 hover:border-rose-400/50 active:scale-95 transition-all"
         >
           <LogOut className="w-4 h-4" />
         </button>
       </header>
 
+      {/* Cuerpo Scrolleable del Consejo */}
       <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-3">
-        <section className="p-3 rounded-xl bg-[#12151e] border border-slate-800">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+        {/* Jugadores y Cupo */}
+        <section className="relative p-3.5 rounded-2xl camelot-card">
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="font-display text-xs font-bold tracking-wide text-amber-200 flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-amber-400" />
-              Jugadores ({players.length}/{configuredPlayers})
+              Caballeros ({players.length}/{configuredPlayers})
             </span>
-            <span className="text-[11px] font-mono text-slate-400">
-              <span className="text-sky-400">{dist.good} Bien</span> /{' '}
-              <span className="text-rose-400">{dist.evil} Mal</span>
-            </span>
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-950/70 border border-sky-400/40 text-sky-300">
+                <Shield className="w-2.5 h-2.5" />
+                {dist.good} Bien
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-950/70 border border-rose-400/40 text-rose-300">
+                <Skull className="w-2.5 h-2.5" />
+                {dist.evil} Mal
+              </span>
+            </div>
           </div>
 
-          <div className="mb-2.5">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] text-slate-400">
-                Cupo de la partida (5 a 10)
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] uppercase tracking-wider text-[#9d917b] font-semibold">
+                Tamaño de la Mesa
               </span>
               {!isHost && (
-                <span className="text-[10px] text-slate-500">
-                  Solo anfitrión
+                <span className="text-[10px] text-[#7c705c]">
+                  Decide el anfitrión
                 </span>
               )}
             </div>
@@ -226,10 +245,10 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
                 const isSelected = configuredPlayers === count;
                 const isTooLow = count < players.length;
                 const countBtnClass =
-                  'py-1.5 rounded-lg border text-xs font-mono font-bold transition-all disabled:opacity-40 ' +
+                  'py-1.5 rounded-lg border text-xs font-mono font-bold transition-all disabled:opacity-35 ' +
                   (isSelected
-                    ? 'bg-amber-500 border-amber-400 text-slate-950'
-                    : 'bg-slate-900 border-slate-800 text-slate-300');
+                    ? 'btn-royal-gold shadow-sm'
+                    : 'bg-[#0e0c14] border-amber-500/20 text-[#b8ab92] hover:border-amber-400/45');
 
                 return (
                   <button
@@ -250,20 +269,22 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
             {players.map((p) => {
               const dotClass =
                 'w-2 h-2 rounded-full shrink-0 ' +
-                (p.isConnected ? 'bg-emerald-400' : 'bg-rose-500');
+                (p.isConnected
+                  ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)]'
+                  : 'bg-rose-500');
 
               return (
                 <div
                   key={p.id}
-                  className="flex items-center justify-between px-2.5 py-2 rounded-lg bg-slate-900/90 border border-slate-800"
+                  className="flex items-center justify-between px-2.5 py-2 rounded-xl bg-[#0e0c14]/95 border border-amber-500/15"
                 >
                   <div className="flex items-center gap-1.5 min-w-0">
                     <span className={dotClass} />
-                    <span className="text-xs font-medium text-slate-100 truncate">
+                    <span className="text-xs font-semibold text-[#f3ebd8] truncate">
                       {p.nickname}
                     </span>
                     {p.id === room.hostId && (
-                      <Crown className="w-3 h-3 text-amber-400 shrink-0" />
+                      <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                     )}
                   </div>
 
@@ -274,7 +295,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
                         tapLight();
                         void kickPlayer(p.id);
                       }}
-                      className="p-1 text-slate-500 hover:text-rose-400"
+                      className="p-1 text-[#7c705c] hover:text-rose-400 transition-colors"
                     >
                       <UserX className="w-3.5 h-3.5" />
                     </button>
@@ -284,19 +305,21 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
             })}
           </div>
           {players.length < configuredPlayers && (
-            <p className="text-[11px] text-amber-400/90 mt-2">
-              Faltan {configuredPlayers - players.length} jugador(es) más para completar los {configuredPlayers} configurados.
+            <p className="text-[11px] text-amber-300/90 mt-2.5 flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
+              Faltan {configuredPlayers - players.length} caballero(s) para completar los {configuredPlayers} cupos.
             </p>
           )}
         </section>
 
-        <section className="p-3 rounded-xl bg-[#12151e] border border-slate-800 space-y-2.5">
+        {/* Roles Especiales */}
+        <section className="p-3.5 rounded-2xl camelot-card space-y-2.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-200">
-              Roles de la Partida
+            <span className="font-display text-xs font-bold tracking-wide text-amber-200">
+              Personajes de Leyenda
             </span>
-            <span className="text-[10px] text-slate-400">
-              Merlín y Asesino obligatorios
+            <span className="text-[10px] text-[#9d917b]">
+              Merlín y Asesino fijos
             </span>
           </div>
 
@@ -308,7 +331,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
               className={percevalBtnClass}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold">Perceval</span>
+                <span className="font-display text-xs font-bold">Perceval</span>
                 <Shield className="w-3.5 h-3.5 text-sky-400" />
               </div>
               <span className="text-[10px] block mt-0.5 opacity-80">
@@ -323,7 +346,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
               className={morganaBtnClass}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold">Morgana</span>
+                <span className="font-display text-xs font-bold">Morgana</span>
                 <Skull className="w-3.5 h-3.5 text-rose-400" />
               </div>
               <span className="text-[10px] block mt-0.5 opacity-80">
@@ -338,7 +361,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
               className={mordredBtnClass}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold">Mordred</span>
+                <span className="font-display text-xs font-bold">Mordred</span>
                 <Skull className="w-3.5 h-3.5 text-rose-400" />
               </div>
               <span className="text-[10px] block mt-0.5 opacity-80">
@@ -353,7 +376,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
               className={oberonBtnClass}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold">Oberón</span>
+                <span className="font-display text-xs font-bold">Oberón</span>
                 <Skull className="w-3.5 h-3.5 text-rose-400" />
               </div>
               <span className="text-[10px] block mt-0.5 opacity-80">
@@ -368,9 +391,10 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
           )}
         </section>
 
-        <section className="p-3 rounded-xl bg-[#12151e] border border-slate-800 space-y-2">
-          <span className="text-xs font-bold text-slate-200 block">
-            Reglas Opcionales
+        {/* Edictos Opcionales */}
+        <section className="p-3.5 rounded-2xl camelot-card space-y-2">
+          <span className="font-display text-xs font-bold tracking-wide text-amber-200 block">
+            Edictos Opcionales
           </span>
 
           <button
@@ -379,14 +403,17 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
             onClick={() => toggleRule('ladyOfTheLake')}
             className={ladyRuleClass}
           >
-            <div>
-              <div className="text-xs font-bold">La Dama del Lago</div>
-              <div className="text-[10px] opacity-80">
-                Investiga la alineación tras las gestas 2, 3 y 4.
+            <div className="flex items-center gap-2.5">
+              <Droplets className="w-4 h-4 text-cyan-400 shrink-0" />
+              <div>
+                <div className="text-xs font-bold">La Dama del Lago</div>
+                <div className="text-[10px] opacity-80">
+                  Revela la lealtad tras las gestas 2, 3 y 4.
+                </div>
               </div>
             </div>
-            <span className="text-[11px] font-mono font-bold">
-              {config.rules.ladyOfTheLake ? 'ON' : 'OFF'}
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-cyan-400/30 bg-black/20">
+              {config.rules.ladyOfTheLake ? 'ACTIVA' : 'NO'}
             </span>
           </button>
 
@@ -396,20 +423,24 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
             onClick={() => toggleRule('targetSelection')}
             className={targetRuleClass}
           >
-            <div>
-              <div className="text-xs font-bold">Elección del Objetivo</div>
-              <div className="text-[10px] opacity-80">
-                El Líder elige qué gesta pendiente realizar.
+            <div className="flex items-center gap-2.5">
+              <Compass className="w-4 h-4 text-amber-400 shrink-0" />
+              <div>
+                <div className="text-xs font-bold">Elección del Objetivo</div>
+                <div className="text-[10px] opacity-80">
+                  El Líder elige qué gesta pendiente emprender.
+                </div>
               </div>
             </div>
-            <span className="text-[11px] font-mono font-bold">
-              {config.rules.targetSelection ? 'ON' : 'OFF'}
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-amber-400/30 bg-black/20">
+              {config.rules.targetSelection ? 'ACTIVA' : 'NO'}
             </span>
           </button>
         </section>
       </div>
 
-      <footer className="p-3 bg-[#12151e] border-t border-slate-800 shrink-0">
+      {/* Pie de Comienzo */}
+      <footer className="p-3 camelot-bar border-t border-amber-500/25 shrink-0">
         {isHost ? (
           <button
             type="button"
@@ -418,18 +449,19 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
               tapMedium();
               void startGame();
             }}
-            className="w-full min-h-[54px] rounded-xl font-bold text-sm bg-amber-500 text-slate-950 disabled:bg-slate-800 disabled:text-slate-500 flex items-center justify-center gap-2"
+            className="w-full min-h-[54px] rounded-xl font-display font-bold text-sm tracking-wider uppercase btn-royal-gold flex items-center justify-center gap-2 active:scale-[0.985] transition-transform"
           >
             <Play className="w-4 h-4 fill-current" />
             Iniciar Partida ({players.length}/{configuredPlayers})
           </button>
         ) : (
-          <div className="min-h-[54px] flex items-center justify-center text-xs text-slate-400">
-            Esperando a que el anfitrión inicie la partida...
+          <div className="min-h-[54px] flex items-center justify-center text-xs text-[#afa28a] italic">
+            Aguardando que el anfitrión alce el estandarte...
           </div>
         )}
       </footer>
 
+      {/* Modal QR de Invitación */}
       {showQrModal && (
         <div
           onClick={() => setShowQrModal(false)}
@@ -437,23 +469,30 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="p-6 rounded-2xl bg-[#12151e] border border-slate-700 text-center space-y-4 max-w-xs w-full"
+            className="relative p-6 rounded-2xl camelot-card text-center space-y-4 max-w-xs w-full"
           >
-            <h3 className="text-sm font-bold text-slate-100">
-              Escanea para unirte a {room.name}
-            </h3>
-            <div className="p-4 bg-white rounded-xl inline-block">
-              <QRCodeSVG value={shareUrl} size={180} />
+            <CornerFiligree />
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-amber-400/80 mb-1">
+                Convocatoria Real
+              </p>
+              <h3 className="font-display text-sm font-bold text-amber-100">
+                {room.name}
+              </h3>
             </div>
-            <div className="text-lg font-mono font-extrabold text-amber-400 tracking-widest">
+            <MedievalDivider />
+            <div className="p-3.5 bg-[#f7f0df] rounded-xl inline-block border-2 border-amber-500/60 shadow-goldring">
+              <QRCodeSVG value={shareUrl} size={172} bgColor="#f7f0df" fgColor="#15111c" />
+            </div>
+            <div className="text-xl font-mono font-extrabold text-amber-300 tracking-[0.28em]">
               {room.code}
             </div>
             <button
               type="button"
               onClick={() => setShowQrModal(false)}
-              className="w-full py-2.5 rounded-xl bg-slate-800 text-xs font-bold text-slate-200"
+              className="w-full py-2.5 rounded-xl bg-[#1e1928] border border-amber-500/30 text-xs font-bold text-amber-200 active:scale-95 transition-transform"
             >
-              Cerrar
+              Cerrar Pergamino
             </button>
           </div>
         </div>

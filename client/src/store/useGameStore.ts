@@ -65,6 +65,7 @@ interface GameStoreState {
   showToast: (msg: string) => void;
   setHistoryOpen: (open: boolean) => void;
   leaveRoomLocally: () => void;
+  leaveRoom: () => Promise<void>;
 
   // Acciones hacia el servidor autoritativo
   createRoom: (nickname: string, roomName: string) => Promise<boolean>;
@@ -123,6 +124,25 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
       window.history.replaceState({}, '', '/');
     }
   },
+
+  leaveRoom: () =>
+    new Promise((resolve) => {
+      const socket = get().socket;
+      if (!socket || !socket.connected) {
+        get().leaveRoomLocally();
+        resolve();
+        return;
+      }
+
+      socket.emit('leave_room', (res?: ActionAckResponse) => {
+        if (res && !res.ok && res.error) {
+          get().showToast(res.error);
+        } else {
+          get().leaveRoomLocally();
+        }
+        resolve();
+      });
+    }),
 
   initSocket: () => {
     if (get().socket) return;
@@ -193,6 +213,11 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
     socket.on('kicked', ({ reason }) => {
       get().leaveRoomLocally();
       get().showToast(reason || 'Has sido expulsado de la sala.');
+    });
+
+    socket.on('room_dissolved', ({ reason }) => {
+      get().leaveRoomLocally();
+      get().showToast(reason || 'La sala se ha disuelto.');
     });
 
     socket.on('error_toast', ({ message }) => {

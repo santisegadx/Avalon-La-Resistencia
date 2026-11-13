@@ -187,6 +187,7 @@ export interface ClientToServerEvents {
     payload: { targetPlayerId: string },
     callback?: (res: ActionAckResponse) => void
   ) => void;
+  leave_room: (callback?: (res: ActionAckResponse) => void) => void;
   start_game: (callback?: (res: ActionAckResponse) => void) => void;
   player_ready: (callback?: (res: ActionAckResponse) => void) => void;
   select_quest_target: (
@@ -225,5 +226,6 @@ export interface ServerToClientEvents {
   room_state: (state: PublicRoomState) => void;
   private_vision: (vision: PlayerVision) => void;
   kicked: (payload: { reason: string }) => void;
+  room_dissolved: (payload: { reason: string }) => void;
   error_toast: (payload: { message: string }) => void;
 }

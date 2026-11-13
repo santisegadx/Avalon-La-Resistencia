@@ -219,6 +219,32 @@ io.on('connection', (socket) => {
     }
   });
 
+  // 5b. Abandonar sala explícitamente (si es el anfitrión, se disuelve la sala)
+  socket.on('leave_room', (callback) => {
+    try {
+      const result = roomManager.leaveRoom(socket.id);
+
+      if (result.dissolved) {
+        socket.to(result.roomCode).emit('room_dissolved', {
+          reason: 'El anfitrión abandonó la sala. La sala se ha disuelto.',
+        });
+        io.in(result.roomCode).socketsLeave(result.roomCode);
+      } else {
+        socket.leave(result.roomCode);
+        if (result.instance) {
+          broadcastRoomState(result.instance);
+        }
+      }
+
+      callback?.({ ok: true });
+    } catch (err) {
+      callback?.({
+        ok: false,
+        error: err instanceof Error ? err.message : 'Error al abandonar la sala.',
+      });
+    }
+  });
+
   // 6. Iniciar Partida (LOBBY -> REVEAL_ROLES)
   socket.on('start_game', (callback) => {
     try {
