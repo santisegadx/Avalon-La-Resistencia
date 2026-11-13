@@ -92,14 +92,13 @@ export const HomeScreen: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
             <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
-              Tu Apodo en la Mesa
+              Tu Apodo
             </label>
             <input
               type="text"
               required
               minLength={2}
               maxLength={16}
-              placeholder="Ej. Arturo, Morgana..."
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               className="w-full px-3.5 py-3 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-amber-400"
@@ -116,7 +115,6 @@ export const HomeScreen: React.FC = () => {
                 required
                 minLength={4}
                 maxLength={6}
-                placeholder="EJ. AVLN42"
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                 className="w-full px-3.5 py-3 rounded-xl bg-slate-950 border border-slate-700 text-base font-mono uppercase tracking-widest text-amber-300 placeholder-slate-600 focus:outline-none focus:border-amber-400"
@@ -132,7 +130,6 @@ export const HomeScreen: React.FC = () => {
                 required
                 minLength={2}
                 maxLength={28}
-                placeholder="Mesa de Camelot"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 className="w-full px-3.5 py-3 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-amber-400"

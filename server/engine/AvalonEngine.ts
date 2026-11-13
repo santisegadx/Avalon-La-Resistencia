@@ -216,8 +216,14 @@ export class AvalonEngine {
 
         const players = publicState.players;
         const playerCount = players.length;
+        const targetPlayers = publicState.room.config.maxPlayers;
         if (playerCount < 5 || playerCount > 10) {
             throw new Error('Se requieren entre 5 y 10 jugadores para iniciar.');
+        }
+        if (playerCount !== targetPlayers) {
+            throw new Error(
+                `La sala está configurada para ${targetPlayers} jugadores (actuales: ${playerCount}).`
+            );
         }
 
         players.forEach((p: Player, idx: number) => {

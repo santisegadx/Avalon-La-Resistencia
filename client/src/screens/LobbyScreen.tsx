@@ -42,8 +42,8 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
   const isHost = room.hostId === myPlayerId;
   const config = room.config;
 
-  const activePlayerCount = Math.max(5, Math.min(10, players.length));
-  const dist = ALIGNMENT_DISTRIBUTION[activePlayerCount];
+  const configuredPlayers = Math.max(5, Math.min(10, config.maxPlayers));
+  const dist = ALIGNMENT_DISTRIBUTION[configuredPlayers];
 
   const selectedGoodCount = 1 + (config.optionalRoles.perceval ? 1 : 0);
   const selectedEvilCount =
@@ -54,7 +54,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
 
   const isEvilOverflow = selectedEvilCount > dist.evil;
   const canStart =
-    isHost && players.length >= 5 && players.length <= 10 && !isEvilOverflow;
+    isHost && players.length === configuredPlayers && !isEvilOverflow;
 
   const shareUrl = window.location.origin + '/room/' + room.code;
 
@@ -68,13 +68,39 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
     }
   };
 
+  const handleMaxPlayersChange = (nextMax: number) => {
+    if (!isHost || nextMax < players.length) return;
+    tapLight();
+    const nextDist = ALIGNMENT_DISTRIBUTION[nextMax];
+    const nextOptionalRoles = { ...config.optionalRoles };
+
+    let evilCount =
+      1 +
+      (nextOptionalRoles.morgana ? 1 : 0) +
+      (nextOptionalRoles.mordred ? 1 : 0) +
+      (nextOptionalRoles.oberon ? 1 : 0);
+
+    for (const key of ['oberon', 'mordred', 'morgana'] as const) {
+      if (evilCount <= nextDist.evil) break;
+      if (nextOptionalRoles[key]) {
+        nextOptionalRoles[key] = false;
+        evilCount -= 1;
+      }
+    }
+
+    void updateConfig({
+      ...config,
+      maxPlayers: nextMax,
+      optionalRoles: nextOptionalRoles,
+    });
+  };
+
   const toggleOptionalRole = (key: keyof RoomConfig['optionalRoles']) => {
     if (!isHost) return;
     tapLight();
     const nextValue = !config.optionalRoles[key];
     void updateConfig({
       ...config,
-      maxPlayers: activePlayerCount,
       optionalRoles: {
         ...config.optionalRoles,
         [key]: nextValue,
@@ -176,12 +202,48 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-amber-400" />
-              Jugadores ({players.length}/10)
+              Jugadores ({players.length}/{configuredPlayers})
             </span>
             <span className="text-[11px] font-mono text-slate-400">
               <span className="text-sky-400">{dist.good} Bien</span> /{' '}
               <span className="text-rose-400">{dist.evil} Mal</span>
             </span>
+          </div>
+
+          <div className="mb-2.5">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] text-slate-400">
+                Cupo de la partida (5 a 10)
+              </span>
+              {!isHost && (
+                <span className="text-[10px] text-slate-500">
+                  Solo anfitrión
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-6 gap-1.5">
+              {[5, 6, 7, 8, 9, 10].map((count) => {
+                const isSelected = configuredPlayers === count;
+                const isTooLow = count < players.length;
+                const countBtnClass =
+                  'py-1.5 rounded-lg border text-xs font-mono font-bold transition-all disabled:opacity-40 ' +
+                  (isSelected
+                    ? 'bg-amber-500 border-amber-400 text-slate-950'
+                    : 'bg-slate-900 border-slate-800 text-slate-300');
+
+                return (
+                  <button
+                    key={count}
+                    type="button"
+                    disabled={!isHost || isTooLow}
+                    onClick={() => handleMaxPlayersChange(count)}
+                    className={countBtnClass}
+                  >
+                    {count}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-1.5">
@@ -221,9 +283,9 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
               );
             })}
           </div>
-          {players.length < 5 && (
+          {players.length < configuredPlayers && (
             <p className="text-[11px] text-amber-400/90 mt-2">
-              Faltan {5 - players.length} jugador(es) más para alcanzar el mínimo de 5.
+              Faltan {configuredPlayers - players.length} jugador(es) más para completar los {configuredPlayers} configurados.
             </p>
           )}
         </section>
@@ -301,7 +363,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
           </div>
           {isEvilOverflow && (
             <p className="text-[11px] text-rose-400">
-              Demasiados roles especiales del Mal para {players.length} jugadores (máx {dist.evil}).
+              Demasiados roles especiales del Mal para {configuredPlayers} jugadores (máx {dist.evil}).
             </p>
           )}
         </section>
@@ -359,7 +421,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
             className="w-full min-h-[54px] rounded-xl font-bold text-sm bg-amber-500 text-slate-950 disabled:bg-slate-800 disabled:text-slate-500 flex items-center justify-center gap-2"
           >
             <Play className="w-4 h-4 fill-current" />
-            Iniciar Partida ({players.length} jugadores)
+            Iniciar Partida ({players.length}/{configuredPlayers})
           </button>
         ) : (
           <div className="min-h-[54px] flex items-center justify-center text-xs text-slate-400">

@@ -144,8 +144,9 @@ export class RoomManager {
         }
 
         const players = instance.publicState.players;
-        if (players.length >= 10) {
-            throw new Error('La sala está llena (máximo 10 jugadores).');
+        const maxPlayers = instance.publicState.room.config.maxPlayers;
+        if (players.length >= maxPlayers) {
+            throw new Error(`La sala está llena (máximo ${maxPlayers} jugadores).`);
         }
 
         const nickname = this.sanitizeNickname(rawNickname);
@@ -170,10 +171,6 @@ export class RoomManager {
 
         players.push(newPlayer);
         instance.secretState.playerTokens[playerToken] = playerId;
-
-        if (players.length > instance.publicState.room.config.maxPlayers && players.length <= 10) {
-            instance.publicState.room.config.maxPlayers = players.length;
-        }
 
         const session: ActiveSession = {
             roomCode,
@@ -246,7 +243,17 @@ export class RoomManager {
             throw new Error('No se puede cambiar la configuración con la partida iniciada.');
         }
 
-        const clampedMax = Math.max(5, Math.min(10, Math.floor(newConfig.maxPlayers)));
+        const rawMax = Number(newConfig.maxPlayers);
+        const baseMax = Number.isFinite(rawMax)
+            ? rawMax
+            : instance.publicState.room.config.maxPlayers;
+        const clampedMax = Math.max(5, Math.min(10, Math.floor(baseMax)));
+
+        if (clampedMax < instance.publicState.players.length) {
+            throw new Error(
+                `Ya hay ${instance.publicState.players.length} jugadores en la sala. Expulsa jugadores antes de reducir el límite a ${clampedMax}.`
+            );
+        }
         const sanitizedConfig: RoomConfig = {
             maxPlayers: clampedMax,
             optionalRoles: {
