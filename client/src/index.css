@@ -1,27 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
-html,
-body,
-#root {
-height: 100dvh;
-width: 100vw;
-overflow: hidden;
-background-color: #0a0c10;
-color: #f1f5f9;
-touch-action: manipulation;
--webkit-tap-highlight-color: transparent;
+
+    html,
+    body,
+    #root {
+        height: 100dvh;
+        width: 100vw;
+        overflow: hidden;
+        background-color: #0a0c10;
+        color: #f1f5f9;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
 }
-}
+
 ::-webkit-scrollbar {
-width: 4px;
-height: 4px;
+    width: 4px;
+    height: 4px;
 }
+
 ::-webkit-scrollbar-track {
-background: transparent;
+    background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-background: rgba(148, 163, 184, 0.25);
-border-radius: 9999px;
+    background: rgba(148, 163, 184, 0.25);
+    border-radius: 9999px;
 }
